@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 env:
-  AZURE_WEBAPP_NAME: TodoApi
+  AZURE_WEBAPP_NAME: TodoAppGitHubActionsPOC
   AZURE_WEBAPP_PACKAGE_PATH: '.'
   DOTNET_VERSION: '5.0.x'
 
@@ -39,7 +39,6 @@ jobs:
         name: build
         path: publish
     - name: ZIP Assets
-      if: github.event_name == 'push'
       run: |
         zip -r build.zip ./publish
         echo 'zip up coverage placeholder'
