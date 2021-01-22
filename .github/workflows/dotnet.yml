@@ -24,12 +24,6 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore --configuration release
-    # - name: Upload Build Directory
-    #   if: github.event_name = 'push'
-    #   uses: actions/upload-artifacts@v1
-    #   with:
-    #     name: build
-    #     path: 
     - name: Test
       run: dotnet test --no-build --verbosity normal --configuration release
     - name: Publish Test Results
