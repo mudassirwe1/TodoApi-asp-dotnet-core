@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  AZURE_WEBAPP_NAME: TodoApi
+  AZURE_WEBAPP_PACKAGE_PATH: '.'
+  DOTNET_VERSION: '5.0.x'
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,7 +19,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.x
+        dotnet-version: ${{ env.DOTNET_VERSION }}
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -32,7 +37,7 @@ jobs:
     - name: Publish Code Coverage
       run: echo 'Code Coverage Placeholder'
     - name: Create Artifacts
-      run: dotnet publish --configuration release --output ./publish
+      run: dotnet publish --configuration release --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/publish
     - name: Publish Artifacts
       if: github.event_name == 'push'
       uses: actions/upload-artifact@v1
