@@ -8,9 +8,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET
@@ -20,6 +18,39 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore --configuration release
+    # - name: Upload Build Directory
+    #   if: github.event_name = 'push'
+    #   uses: actions/upload-artifacts@v1
+    #   with:
+    #     name: build
+    #     path: 
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity normal --configuration release
+    - name: Publish Test Results
+      run: echo 'Test Results Placeholder'
+    - name: Publish Code Coverage
+      run: echo 'Code Coverage Placeholder'
+    - name: Create Artifacts
+      run: dotnet publish --configuration release --output ./publish
+    - name: Publish Artifacts
+      if: github.event_name == 'push'
+      uses: actions/upload-artifacts@v1
+      with:
+        name: build
+        path: publish
+    - name: ZIP Assets
+      if: github.event_name == 'push'
+      run: |
+        zip -r build.zip ./publish
+        echo 'zip up coverage placeholder'
+    - name: Create a Release
+      if: github.event_name == 'push'
+      run: echo 'release placeholder'
+    - name: Deploy to Staging
+      run: echo 'deploy to staging placeholder'
+    - name: Deploy to Production
+      run: echo 'deploy to production placeholder'
+    - name: Open Issue
+      if: failure() && github.event_name == 'pull_request'
+      run: echo 'open issue if failure placeholder'
