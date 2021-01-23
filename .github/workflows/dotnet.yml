@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 env:
-  AZURE_WEBAPP_NAME: TodoApi
+  AZURE_WEBAPP_NAME: TodoAppGitHubActionsPOC
   AZURE_WEBAPP_PACKAGE_PATH: '.'
   DOTNET_VERSION: '5.0.x'
 
@@ -24,12 +24,6 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore --configuration release
-    # - name: Upload Build Directory
-    #   if: github.event_name = 'push'
-    #   uses: actions/upload-artifacts@v1
-    #   with:
-    #     name: build
-    #     path: 
     - name: Test
       run: dotnet test --no-build --verbosity normal --configuration release
     - name: Publish Test Results
@@ -45,7 +39,6 @@ jobs:
         name: build
         path: publish
     - name: ZIP Assets
-      if: github.event_name == 'push'
       run: |
         zip -r build.zip ./publish
         echo 'zip up coverage placeholder'
@@ -53,9 +46,19 @@ jobs:
       if: github.event_name == 'push'
       run: echo 'release placeholder'
     - name: Deploy to Staging
-      run: echo 'deploy to staging placeholder'
+      if: github.event_name == 'pull_request'
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/publish
     - name: Deploy to Production
-      run: echo 'deploy to production placeholder'
+      if: github.event_name == 'push'
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}prod
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PROD }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/publish
     - name: Open Issue
       if: failure() && github.event_name == 'pull_request'
       run: echo 'open issue if failure placeholder'
