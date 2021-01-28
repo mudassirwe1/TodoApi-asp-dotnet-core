@@ -39,3 +39,12 @@ function deleteItem(id) {
         .then(() => getItems())
         .catch(error => console.error('Unable to delete item.', error))
 }
+
+function displayEditForm() {
+    const item = todos.find(item => item.id === id);
+
+    document.getElementById('edit-name').value = item.name;
+    document.getElementById('edit-id').value = item.id;
+    document.getElementById('edit-isComplete').checked = item.isComplete;
+    document.getElementById('editForm').style.display = 'block';
+}
