@@ -31,3 +31,11 @@ function addItem() {
         })
         .catch(error => console.error('Unable to add item.', error));
 }
+
+function deleteItem(id) {
+    fetch(`${uri}/${id}`, {
+        method: 'DELETE'
+    })
+        .then(() => getItems())
+        .catch(error => console.error('Unable to delete item.', error))
+}
