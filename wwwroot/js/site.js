@@ -50,7 +50,7 @@ function displayEditForm() {
 }
 
 function updateItem() {
-    const item = document.getElementById('edit-id').value;
+    const itemId = document.getElementById('edit-id').value;
     const item = {
         id: parseInt(itemId, 10),
         isComplete: document.getElementById('edit-isComplete').checked,
