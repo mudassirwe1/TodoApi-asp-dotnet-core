@@ -114,8 +114,7 @@ namespace TodoApi.Controllers
             {
                 Id = todoItem.Id,
                 Name = todoItem.Name,
-                IsComplete = todoItem.IsComplete,
-                Person = todoItem.Person
+                IsComplete = todoItem.IsComplete
             };
     }
 }
