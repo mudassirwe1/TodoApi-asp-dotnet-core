@@ -77,6 +77,12 @@ function closeInput() {
     document.getElementById('editForm').style.display = 'none';
 }
 
+function _displayCount(itemCount) {
+    const name = (itemCount === 1) ? 'to-do' : 'to-dos';
+
+    document.getElementById('counter').innerText = `${itemCount} ${name}`;
+}
+
 
 
 
