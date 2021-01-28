@@ -40,7 +40,7 @@ function deleteItem(id) {
         .catch(error => console.error('Unable to delete item.', error))
 }
 
-function displayEditForm() {
+function displayEditForm(id) {
     const item = todos.find(item => item.id === id);
 
     document.getElementById('edit-name').value = item.name;
