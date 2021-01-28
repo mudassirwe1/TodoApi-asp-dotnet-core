@@ -123,7 +123,3 @@ function _displayItems(data) {
 
     todos = data;
 }
-
-
-
-
