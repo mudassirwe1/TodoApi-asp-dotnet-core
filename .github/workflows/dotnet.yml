@@ -2,7 +2,7 @@ name: .NET CI/CD
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, feature/** ]
   pull_request:
     branches: [ master ]
 
@@ -33,7 +33,7 @@ jobs:
     - name: Create Artifacts
       run: dotnet publish --configuration release --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/publish
     - name: Publish Artifacts
-      if: github.event_name == 'push'
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
       uses: actions/upload-artifact@v1
       with:
         name: build
@@ -43,17 +43,17 @@ jobs:
         zip -r build.zip ./publish
         echo 'zip up coverage placeholder'
     - name: Create a Release
-      if: github.event_name == 'push'
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
       run: echo 'release placeholder'
     - name: Deploy to Staging
-      if: github.event_name == 'pull_request'
+      if: github.event_name == 'pull_request' && github.ref == 'refs/heads/master'
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/publish
     - name: Deploy to Production
-      if: github.event_name == 'push'
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}Prod
