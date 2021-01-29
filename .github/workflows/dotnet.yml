@@ -35,7 +35,7 @@ jobs:
     - name: Create Artifacts
       run: dotnet publish --configuration release --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/publish
     - name: Publish Artifacts
-      if: (github.event_name == 'push' || github.event_name == 'pull_request') && github.ref == 'refs/heads/master'
+      if: github.ref != 'refs/heads/feature/**'
       uses: actions/upload-artifact@v2
       with:
         name: build
