@@ -31,7 +31,7 @@ jobs:
     - name: Publish Code Coverage
       run: echo 'Code Coverage Placeholder'
     - name: Create Artifacts
-      run: dotnet pubsalish --configuration release --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/publish
+      run: dotnet publish --configuration release --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/publish
     - name: Publish Artifacts
       if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/pull')
       uses: actions/upload-artifact@v2
