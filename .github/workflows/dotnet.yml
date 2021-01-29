@@ -48,7 +48,7 @@ jobs:
       if: github.event_name == 'pull_request' && github.ref == 'refs/heads/master'
       run: echo 'release placeholder'
   deploy-to-staging:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/pull'))
     environment: Staging
     needs: [build]
     runs-on: ubuntu-latest
