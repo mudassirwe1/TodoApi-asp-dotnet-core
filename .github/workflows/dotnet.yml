@@ -31,16 +31,13 @@ jobs:
     - name: Publish Code Coverage
       run: echo 'Code Coverage Placeholder'
     - name: Create Artifacts
-      if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/pull')
       run: dotnet publish --configuration release --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/publish
     - name: Publish Artifacts
-      if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/pull')
       uses: actions/upload-artifact@v2
       with:
         name: build
         path: publish
     - name: ZIP Assets
-      if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/pull')
       run: |
         zip -r build.zip ./publish
         echo 'zip up coverage placeholder'
