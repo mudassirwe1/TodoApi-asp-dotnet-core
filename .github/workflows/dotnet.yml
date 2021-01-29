@@ -48,36 +48,34 @@ jobs:
       if: github.event_name == 'pull_request' && github.ref == 'refs/heads/master'
       run: echo 'release placeholder'
   deploy-to-staging:
+    if: github.event_name == 'pull_request'
     environment: Staging
     needs: [build]
     runs-on: ubuntu-latest
     steps:
     - name: Download Artifacts
-      if: github.event_name == 'pull_request'
       uses: actions/download-artifact@v2
       with:
         name: build
         path: publish
     - name: Deploy to Staging
-      if: github.event_name == 'pull_request'
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/publish
   deploy-to-production:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     environment: Production
     needs: [build]
     runs-on: ubuntu-latest
     steps:
     - name: Download Artifacts
-      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
       uses: actions/download-artifact@v2
       with:
         name: build
         path: publish
     - name: Deploy to Production
-      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}Prod
