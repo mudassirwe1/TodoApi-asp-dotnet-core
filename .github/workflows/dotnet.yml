@@ -33,7 +33,7 @@ jobs:
     - name: Create Artifacts
       run: dotnet publish --configuration release --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/publish
     - name: Publish Artifacts
-      if: startsWith(github.ref, 'refs/heads/feature')
+      if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/pull')
       uses: actions/upload-artifact@v2
       with:
         name: build
