@@ -15,8 +15,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: echo github.ref
-      run: echo ${{ github.ref }}
     - uses: actions/checkout@v2
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
@@ -35,7 +33,7 @@ jobs:
     - name: Create Artifacts
       run: dotnet publish --configuration release --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/publish
     - name: Publish Artifacts
-      if: github.ref != 'refs/heads/feature/**'
+      if: startsWith(github.ref, 'refs/heads/feature')
       uses: actions/upload-artifact@v2
       with:
         name: build
