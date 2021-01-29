@@ -81,4 +81,4 @@ jobs:
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/publish
     - name: Open Issue
       if: failure() && github.event_name == 'pull_request'
-      run: echo 'open issue if there are any failures placeholder'
+      run: echo 'open issue if there are any failures - placeholder'
