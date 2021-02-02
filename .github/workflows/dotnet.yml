@@ -30,8 +30,8 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     - name: echo framework
       run: echo ${{env.FRAMEWORK}}
-    - uses: ./.devops/${{env.FRAMEWORK}}/build
-    - uses: ./.devops/${{env.FRAMEWORK}}/test
+    - uses: ./.devops/$env.FRAMEWORK/build
+    - uses: ./.devops/$env.FRAMEWORK/test
     - name: Create Artifacts
       run: dotnet publish --configuration release --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/publish
     - name: Publish Artifacts
