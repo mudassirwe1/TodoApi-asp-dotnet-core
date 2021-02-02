@@ -13,7 +13,7 @@ env:
 
 jobs:
   build:
-    runs-on: ${{ env.RUNNER_OS }}
+    runs-on: ${{ secrets.RUNNER_OS }}
     steps:
     - uses: actions/checkout@v2
     - name: Checkout tools repo
