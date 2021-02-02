@@ -24,6 +24,7 @@ jobs:
         token: ${{ secrets.DEV_BOT_PAT }}
         path: .devops
         ref: create-workflow-template
+    - run: ls && ls .devops && ls .devops/common
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
