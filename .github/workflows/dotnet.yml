@@ -12,6 +12,8 @@ env:
 
 jobs:
   build:
+    env:
+      FRAMEWORK: ${{secrets.FRAMEWORK}}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -27,7 +29,7 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     - name: echo framework
-      run: echo ${{secrets.FRAMEWORK}}
+      run: echo ${{env.FRAMEWORK}}
     - uses: ./.devops/a/build
     - uses: ./.devops/a/test
     - name: Create Artifacts
