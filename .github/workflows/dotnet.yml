@@ -9,11 +9,10 @@ env:
   AZURE_WEBAPP_NAME: TodoAppGitHubActionsPOC
   AZURE_WEBAPP_PACKAGE_PATH: '.'
   DOTNET_VERSION: '5.0.x'
-  RUNNER_OS: ${{ secrets.RUNNER_OS }}
 
 jobs:
   build:
-    runs-on: ${{ env.RUNNER_OS }}
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Checkout tools repo
@@ -27,8 +26,8 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
-    - uses: "./.devops/dotnet-core/build"
-    - uses: "./.devops/dotnet-core/test"
+    - uses: "./.devops/${{ secrets.FRAMEWORK}}/build"
+    - uses: "./.devops/${{ secrets.FRAMEWORK}}/test"
     - name: Create Artifacts
       run: dotnet publish --configuration release --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/publish
     - name: Publish Artifacts
