@@ -13,7 +13,7 @@ env:
 
 jobs:
   build:
-    runs-on: ${{ secrets.RUNNER_OS }}
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Checkout tools repo
@@ -22,12 +22,12 @@ jobs:
         repository: WernerDevOps/devops-actions
         token: ${{ secrets.DEV_BOT_PAT }}
         path: .github
-    - name: Setup ${{ secrets.FRAMEWORK }}
+    - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
-    - uses: "./.github/${{ secrets.PROJECT_FRAMEWORK }}/build"
-    - uses: "./.github/${{ secrets.PROJECT_FRAMEWORK }}/test"
+    - uses: "./.github/dotnet-core/build"
+    - uses: "./.github/dotnet-core/test"
     - name: Create Artifacts
       run: dotnet publish --configuration release --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/publish
     - name: Publish Artifacts
