@@ -20,7 +20,7 @@ jobs:
     - name: Checkout tools repo
       uses: actions/checkout@v2
       with:
-        repository: WernerDevOps/devops-actions/${{env.FRAMEWORK}}
+        repository: WernerDevOps/devops-actions
         token: ${{ secrets.DEV_BOT_PAT }}
         path: .devops
         ref: create-workflow-template
@@ -30,8 +30,8 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     - name: echo framework
       run: echo ${{env.FRAMEWORK}}
-    - uses: "./.devops/build"
-    - uses: "./.devops/test"
+    - uses: "./.devops/common/build"
+    - uses: "./.devops/common/test"
     - name: Create Artifacts
       run: dotnet publish --configuration release --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/publish
     - name: Publish Artifacts
