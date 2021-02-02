@@ -9,10 +9,11 @@ env:
   AZURE_WEBAPP_NAME: TodoAppGitHubActionsPOC
   AZURE_WEBAPP_PACKAGE_PATH: '.'
   DOTNET_VERSION: '5.0.x'
+  RUNNER_OS: ${{ secrets.RUNNER_OS }}
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ env.RUNNER_OS }}
     steps:
     - uses: actions/checkout@v2
     - name: Checkout tools repo
