@@ -3,7 +3,7 @@ name: .NET CI/CD
 on:
   push:
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 env:
   AZURE_WEBAPP_NAME: TodoAppGitHubActionsPOC
