@@ -28,13 +28,13 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
-    - uses: "./.devops/common/build"
+    - uses: ".devops/common/build"
       with:
         framework: ${{ env.FRAMEWORK }}
-    - uses: "./.devops/common/test"
+    - uses: ".devops/common/test"
       with:
         framework: ${{ env.FRAMEWORK }}
-    - uses: "./.devops/common/publish"
+    - uses: ".devops/common/publish"
       with:
         framework: ${{ env.FRAMEWORK }}
     - name: Upload Artifacts
