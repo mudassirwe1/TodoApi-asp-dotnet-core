@@ -29,11 +29,6 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
-    - name: Setup Java
-      if: env.FRAMEWORK == 'java'
-      uses: actions/setup-java@v1
-      with:
-        java-version: '9.0.4'
     - name: Build
       uses: "./.devops/common/build"
       with:
