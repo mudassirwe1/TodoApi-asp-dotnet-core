@@ -34,7 +34,10 @@ jobs:
     - uses: "./.devops/common/test"
       with:
         framework: ${{ env.FRAMEWORK }}
-    - name: Publish Artifacts
+    - uses: "./.devops/common/publish"
+      with:
+        framework: ${{ env.FRAMEWORK }}
+    - name: Upload Artifacts
       uses: actions/upload-artifact@v2
       with:
         name: build
