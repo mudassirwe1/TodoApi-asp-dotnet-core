@@ -28,13 +28,16 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
-    - uses: "./.devops/common/build"
+    - name: Build
+      uses: "./.devops/common/build"
       with:
         framework: ${{ env.FRAMEWORK }}
-    - uses: "./.devops/common/test"
+    - name: Test
+      uses: "./.devops/common/test"
       with:
         framework: ${{ env.FRAMEWORK }}
-    - uses: "./.devops/common/publish"
+    - name: Publish
+      uses: "./.devops/common/publish"
       if: startsWith(github.ref, 'refs/pull') || github.ref == 'refs/heads/master'
       with:
         framework: ${{ env.FRAMEWORK }}
