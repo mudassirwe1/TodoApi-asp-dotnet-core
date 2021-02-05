@@ -35,11 +35,11 @@ jobs:
       with:
         framework: ${{ env.FRAMEWORK }}
     - uses: "./.devops/common/publish"
-      if: startsWith(github.ref, "refs/pull") || github.ref == 'refs/heads/master'
+      if: startsWith(github.ref, 'refs/pull') || github.ref == 'refs/heads/master'
       with:
         framework: ${{ env.FRAMEWORK }}
     - name: Upload Artifacts
-      if: startsWith(github.ref, "refs/pull") || github.ref == 'refs/heads/master'
+      if: startsWith(github.ref, 'refs/pull') || github.ref == 'refs/heads/master'
       uses: actions/upload-artifact@v2
       with:
         name: build
