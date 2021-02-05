@@ -7,7 +7,7 @@ on:
 
 env:
   AZURE_WEBAPP_NAME: TodoAppGitHubActionsPOC
-  AZURE_WEBAPP_PACKAGE_PATH: '.'
+  AZURE_WEBAPP_PACKAGE_PATH: './publish'
   DOTNET_VERSION: '5.0.x'
 
 jobs:
@@ -67,7 +67,7 @@ jobs:
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/publish
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
   deploy-to-production:
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     environment: Production
@@ -84,7 +84,7 @@ jobs:
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}Prod
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PROD }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/publish
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
     - name: Open Issue
       if: failure() && github.event_name == 'pull_request'
       run: echo 'open issue if there are any failures | placeholder'
