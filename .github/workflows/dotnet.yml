@@ -39,10 +39,6 @@ jobs:
       with:
         name: build
         path: publish
-    - name: ZIP Assets
-      run: |
-        zip -r build.zip ./publish
-        echo 'zip up coverage placeholder'
     - name: Create a Release
       if: github.event_name == 'pull_request' && github.ref == 'refs/heads/master'
       run: echo 'release placeholder'
