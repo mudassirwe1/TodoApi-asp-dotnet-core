@@ -40,9 +40,8 @@ jobs:
       with:
         framework: ${{ env.FRAMEWORK }}
     - name: Publish
-      if: env.FRAMEWORK == 'dotnet-core'
-      uses: "./.devops/common/publish"
       if: startsWith(github.ref, 'refs/pull') || github.ref == 'refs/heads/master'
+      uses: "./.devops/common/publish"
       with:
         framework: ${{ env.FRAMEWORK }}
     - name: Upload Artifacts
