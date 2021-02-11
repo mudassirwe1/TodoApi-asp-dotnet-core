@@ -8,8 +8,10 @@ on:
 env:
   APP_NAME: ${{ secrets.APP_NAME }}
   FRAMEWORK: ${{ secrets.FRAMEWORK }}
+  FRAMEWORK_VERSION: ${{ secrets.FRAMEWORK_VERSION }}
+  DEV_BOT_PAT: ${{ secrets.DEV_BOT_PAT }}
   AZURE_WEBAPP_PACKAGE_PATH: ${{ secerts.AZURE_WEBAPP_PACKAGE_PATH }}
-  DOTNET_VERSION: ${{ secrets.DOTNET_VERSION }}
+  AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
 
 jobs:
   build:
@@ -21,14 +23,14 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: WernerDevOps/devops-actions
-        token: ${{ secrets.DEV_BOT_PAT }}
+        token: ${{ env.DEV_BOT_PAT }}
         path: .devops
         ref: create-workflow-template
     - name: Setup .NET
       if: env.FRAMEWORK == 'dotnet-core'
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: ${{ secrets.DOTNET_VERSION }}
+        dotnet-version: ${{ secrets.FRAMEWORK_VERSION }}
     - name: Build
       uses: "./.devops/common/build"
       with:
@@ -48,7 +50,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: build
-        path: ${{ secrets.AZURE_WEBAPP_PACKAGE_PATH }}
+        path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
     - name: Create a Release
       if: github.event_name == 'pull_request' && github.ref == 'refs/heads/master'
       run: echo 'release placeholder'
@@ -62,13 +64,13 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: build
-        path: ${{ secrets.AZURE_WEBAPP_PACKAGE_PATH }}
+        path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
     - name: Deploy to Staging
       uses: azure/webapps-deploy@v2
       with:
-        app-name: ${{ secrets.APP_NAME }}
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ${{ secrets.AZURE_WEBAPP_PACKAGE_PATH }}
+        app-name: ${{ env.APP_NAME }}
+        publish-profile: ${{ env.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
   deploy-to-production:
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     environment: Production
@@ -79,13 +81,13 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: build
-        path: ${{ secrets.AZURE_WEBAPP_PACKAGE_PATH }}
+        path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
     - name: Deploy to Production
       uses: azure/webapps-deploy@v2
       with:
-        app-name: ${{ secrets.APP_NAME }}Prod
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ${{ secrets.AZURE_WEBAPP_PACKAGE_PATH }}
+        app-name: ${{ env.APP_NAME }}Prod
+        publish-profile: ${{ env.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
     - name: Open Issue
       if: failure() && github.event_name == 'pull_request'
       run: echo 'open issue if there are any failures | placeholder'
