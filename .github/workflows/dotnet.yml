@@ -5,11 +5,15 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  APP_NAME: ${{ secrets.APP_NAME }}
+  FRAMEWORK: ${{ secrets.FRAMEWORK }}
+  AZURE_WEBAPP_PACKAGE_PATH: ${{ secerts.AZURE_WEBAPP_PACKAGE_PATH }}
+  DOTNET_VERSION: ${{ secrets.DOTNET_VERSION }}
+
 jobs:
   build:
     name: Build - Test - Publish
-    env:
-      FRAMEWORK: ${{ secrets.FRAMEWORK }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -34,6 +38,7 @@ jobs:
       with:
         framework: ${{ env.FRAMEWORK }}
     - name: Publish
+      if: env.FRAMEWORK == 'dotnet-core'
       uses: "./.devops/common/publish"
       if: startsWith(github.ref, 'refs/pull') || github.ref == 'refs/heads/master'
       with:
@@ -63,7 +68,7 @@ jobs:
       with:
         app-name: ${{ secrets.APP_NAME }}
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ./${{ secrets.AZURE_WEBAPP_PACKAGE_PATH }}
+        package: ${{ secrets.AZURE_WEBAPP_PACKAGE_PATH }}
   deploy-to-production:
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     environment: Production
@@ -80,7 +85,7 @@ jobs:
       with:
         app-name: ${{ secrets.APP_NAME }}Prod
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ./${{ secrets.AZURE_WEBAPP_PACKAGE_PATH }}
+        package: ${{ secrets.AZURE_WEBAPP_PACKAGE_PATH }}
     - name: Open Issue
       if: failure() && github.event_name == 'pull_request'
       run: echo 'open issue if there are any failures | placeholder'
