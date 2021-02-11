@@ -5,11 +5,6 @@ on:
   pull_request:
     branches: [ master ]
 
-env:
-  AZURE_WEBAPP_NAME: TodoAppGitHubActionsPOC
-  AZURE_WEBAPP_PACKAGE_PATH: './publish'
-  DOTNET_VERSION: '5.0.x'
-
 jobs:
   build:
     name: Build - Test - Publish
@@ -29,7 +24,7 @@ jobs:
       if: env.FRAMEWORK == 'dotnet-core'
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+        dotnet-version: ${{ secrets.DOTNET_VERSION }}
     - name: Build
       uses: "./.devops/common/build"
       with:
@@ -48,7 +43,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: build
-        path: publish
+        path: ${{ secrets.AZURE_WEBAPP_PACKAGE_PATH }}
     - name: Create a Release
       if: github.event_name == 'pull_request' && github.ref == 'refs/heads/master'
       run: echo 'release placeholder'
@@ -62,13 +57,13 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: build
-        path: publish
+        path: ${{ secrets.AZURE_WEBAPP_PACKAGE_PATH }}
     - name: Deploy to Staging
       uses: azure/webapps-deploy@v2
       with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        app-name: ${{ secrets.APP_NAME }}
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        package: ./${{ secrets.AZURE_WEBAPP_PACKAGE_PATH }}
   deploy-to-production:
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     environment: Production
@@ -79,13 +74,13 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: build
-        path: publish
+        path: ${{ secrets.AZURE_WEBAPP_PACKAGE_PATH }}
     - name: Deploy to Production
       uses: azure/webapps-deploy@v2
       with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}Prod
+        app-name: ${{ secrets.APP_NAME }}Prod
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        package: ./${{ secrets.AZURE_WEBAPP_PACKAGE_PATH }}
     - name: Open Issue
       if: failure() && github.event_name == 'pull_request'
       run: echo 'open issue if there are any failures | placeholder'
