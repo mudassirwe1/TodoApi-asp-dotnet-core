@@ -1,46 +1,55 @@
-name: .NET CI/CD
+name: CI/CD 
 
 on:
   push:
-    branches: [ master, feature/** ]
   pull_request:
     branches: [ master ]
 
 env:
-  AZURE_WEBAPP_NAME: TodoAppGitHubActionsPOC
-  AZURE_WEBAPP_PACKAGE_PATH: '.'
-  DOTNET_VERSION: '5.0.x'
+  APP_NAME: ${{ secrets.APP_NAME }}
+  FRAMEWORK: ${{ secrets.FRAMEWORK }}
+  FRAMEWORK_VERSION: ${{ secrets.FRAMEWORK_VERSION }}
+  DEV_BOT_PAT: ${{ secrets.DEV_BOT_PAT }}
+  AZURE_WEBAPP_PACKAGE_PATH: ${{ secrets.AZURE_WEBAPP_PACKAGE_PATH }}
+  AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
 
 jobs:
   build:
+    name: Build - Test - Publish
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Checkout tools repo
+      uses: actions/checkout@v2
+      with:
+        repository: WernerDevOps/devops-actions
+        token: ${{ env.DEV_BOT_PAT }}
+        path: .devops
+        ref: create-workflow-template
     - name: Setup .NET
+      if: env.FRAMEWORK == 'dotnet-core'
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
-    - name: Restore dependencies
-      run: dotnet restore
+        dotnet-version: ${{ secrets.FRAMEWORK_VERSION }}
     - name: Build
-      run: dotnet build --no-restore --configuration release
+      uses: "./.devops/common/build"
+      with:
+        framework: ${{ env.FRAMEWORK }}
     - name: Test
-      run: dotnet test --no-build --verbosity normal --configuration release
-    - name: Publish Test Results
-      run: echo 'Test Results Placeholder'
-    - name: Publish Code Coverage
-      run: echo 'Code Coverage Placeholder'
-    - name: Create Artifacts
-      run: dotnet publish --configuration release --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/publish
-    - name: Publish Artifacts
+      uses: "./.devops/common/test"
+      with:
+        framework: ${{ env.FRAMEWORK }}
+    - name: Publish
+      if: startsWith(github.ref, 'refs/pull') || github.ref == 'refs/heads/master'
+      uses: "./.devops/common/publish"
+      with:
+        framework: ${{ env.FRAMEWORK }}
+    - name: Upload Artifacts
+      if: startsWith(github.ref, 'refs/pull') || github.ref == 'refs/heads/master'
       uses: actions/upload-artifact@v2
       with:
         name: build
-        path: publish
-    - name: ZIP Assets
-      run: |
-        zip -r build.zip ./publish
-        echo 'zip up coverage placeholder'
+        path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
     - name: Create a Release
       if: github.event_name == 'pull_request' && github.ref == 'refs/heads/master'
       run: echo 'release placeholder'
@@ -54,13 +63,13 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: build
-        path: publish
+        path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
     - name: Deploy to Staging
       uses: azure/webapps-deploy@v2
       with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/publish
+        app-name: ${{ env.APP_NAME }}
+        publish-profile: ${{ env.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
   deploy-to-production:
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     environment: Production
@@ -71,13 +80,13 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: build
-        path: publish
+        path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
     - name: Deploy to Production
       uses: azure/webapps-deploy@v2
       with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}Prod
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PROD }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/publish
+        app-name: ${{ env.APP_NAME }}Prod
+        publish-profile: ${{ env.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
     - name: Open Issue
       if: failure() && github.event_name == 'pull_request'
       run: echo 'open issue if there are any failures | placeholder'
