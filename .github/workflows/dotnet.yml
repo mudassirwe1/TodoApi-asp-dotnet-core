@@ -3,7 +3,7 @@ name: CI/CD
 on:
   push:
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 env:
   APP_NAME: ${{ secrets.APP_NAME }}
@@ -39,18 +39,18 @@ jobs:
       with:
         framework: ${{ env.FRAMEWORK }}
     - name: Publish
-      if: startsWith(github.ref, 'refs/pull') || github.ref == 'refs/heads/master'
+      if: startsWith(github.ref, 'refs/pull') || github.ref == 'refs/heads/main'
       uses: "./.devops/common/publish"
       with:
         framework: ${{ env.FRAMEWORK }}
     - name: Upload Artifacts
-      if: startsWith(github.ref, 'refs/pull') || github.ref == 'refs/heads/master'
+      if: startsWith(github.ref, 'refs/pull') || github.ref == 'refs/heads/main'
       uses: actions/upload-artifact@v2
       with:
         name: build
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
     - name: Create a Release
-      if: github.event_name == 'pull_request' && github.ref == 'refs/heads/master'
+      if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
       run: echo 'release placeholder'
   deploy-to-staging:
     if: github.event_name == 'pull_request'
@@ -70,7 +70,7 @@ jobs:
         publish-profile: ${{ env.AZURE_WEBAPP_PUBLISH_PROFILE }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
   deploy-to-production:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment: Production
     needs: [build]
     runs-on: ubuntu-latest
